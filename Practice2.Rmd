@@ -137,6 +137,14 @@ HDL = 1.3 mmol/l
 Show your calculation. (5 marks)
 
 ```{r}
+summary(MODEL_B)
+```
+
+equation
+
+hba1c = 3.49 + 1.33 (dmdxyes) + 0.31 (fbs)
+
+```{r}
 summary(model.matrix(MODEL_B))
 ```
 
