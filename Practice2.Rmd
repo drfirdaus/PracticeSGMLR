@@ -1,0 +1,27 @@
+---
+title: "Practice SG MLR"
+author: "Ahmad Firdaus Mohamed"
+date: "2024-01-21"
+output: word_document
+---
+
+1\. Data were collected to study factors that were related with HbA1c. The dataset is named as “metab_syndrome” and in .xlsx formats. (FIRDAUS) (? Dataset [https://github.com/drkamarul/multivar_data_analysis/blob/main/data/metabolic_syndrome.dta)](https://github.com/drkamarul/multivar_data_analysis/blob/main/data/metabolic_syndrome.dta))
+
+A model was proposed to examine the relationship between HBA1C with these covariates: AGE, DMDX, MSBPR, FBS and HDL.
+
+a\. Write the regression model and equation for MODEL_A. (15 marks)
+
+# Prepare Environment
+
+## Load Library
+
+```{r}
+library(tidyverse)
+library(broom)
+library(ggplot2)
+library(corrplot)
+library(gtsummary)
+library(haven)
+```
+
+Read Data

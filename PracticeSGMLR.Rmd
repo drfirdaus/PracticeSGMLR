@@ -16,6 +16,7 @@ library(gtsummary)
 library(haven)
 library(corrplot)
 library(tidyr)
+library(broom)
 ```
 
 ## Read Data
@@ -140,5 +141,55 @@ summary(mod.MLR)
 ```
 
 ```{r}
-tidy(mod.MLR, confin)
+tidy(mod.MLR, conf.int =TRUE)
+```
+
+## Multivariable model with interaction
+
+```{r}
+mod.MLR.ia <- lm (hba1c ~ age + msbpr+ fbs + hdl + dmdx + msbpr:fbs, data=Data2)
+summary(mod.MLR.ia)
+```
+
+```{r}
+tidy(mod.MLR.ia, conf.int = TRUE)
+```
+
+However we only want to do the model without interaction in the question.
+
+### Checking assumption for mod.MLR
+
+# Interpretation
+
+```{r}
+MODEL_A <- mod.MLR
+```
+
+```{r}
+summary(MODEL_A)
+tidy(MODEL_A, conf.int = TRUE)
+```
+
+```{r}
+tbl.MODEL_A <- tbl_regression(MODEL_A)
+tbl.MODEL_A
+```
+
+1.  MLR showed that fbs and dmdx have significant linear relationship to hba1c
+2.  The model explained 54.9% of variation of hba1c in the study sample
+3.  Every 1 mmol/l increase of fbs will increase hba1c by 0.32mmol/l
+4.  Being diabetic will increase hba1c by 1.3mmol/l
+
+The regression model and equation for MODEL_A
+
+hba1c = 3.77 + 0.32 (fbs) + 1.3 (dmdxyes)
+
+# Adding MODEL_B
+
+Following that, the question ask to add MDBPR to the model, and name it as MODEL_B
+
+```{r}
+MODEL_B <- lm (hba1c~ age + msbpr+ fbs + hdl + dmdx + mdbpr, data=Data2)
+summary(MODEL_B)
+
 ```
