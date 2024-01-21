@@ -1,0 +1,144 @@
+---
+title: "Practice SG MLR"
+author: "Ahmad Firdaus Mohamed"
+date: "2024-01-21"
+output: word_document
+---
+
+# Prepare Environment
+
+## Load Library
+
+```{r}
+library(tidyverse)
+library(ggplot2)
+library(gtsummary)
+library(haven)
+library(corrplot)
+library(tidyr)
+```
+
+## Read Data
+
+```{r}
+Data1<-read_dta("metabolic_syndrome.dta")
+summary(Data1)
+```
+
+```{r}
+Data2<-select(Data1,hba1c,age,dmdx,msbpr,fbs,hdl,mdbpr)
+summary(Data2)
+```
+
+### Mutate dmdx to categorical
+
+```{r}
+Data2<- Data2 %>%
+  mutate(dmdx= as_factor(dmdx))
+```
+
+```{r}
+summary(Data2)
+```
+
+### Remove missing data
+
+```{r}
+Data2 <- Data2 %>%
+  na.omit()
+```
+
+```{r}
+summary(Data2)
+```
+
+### Summary in Table
+
+```{r}
+Descriptive.tbl<- tbl_summary(statistic=list(all_continuous()~"{mean}({sd})", all_categorical()~"{n}/{N} ({p}%)"),Data2)
+Descriptive.tbl
+```
+
+## Explore Data
+
+Histogram for numerical & barplot for categorical
+
+Numerical age,msbpr,fbs,hdl,mdbpr
+
+Categorical dmdx
+
+### hba1c
+
+```{r}
+Data2 %>%
+  ggplot(aes(hba1c)) + geom_histogram()
+```
+
+### age
+
+```{r}
+Data2 %>%
+  ggplot(aes(age)) + geom_histogram()
+```
+
+### msbpr
+
+```{r}
+Data2 %>%
+  ggplot(aes(msbpr))+geom_histogram()
+```
+
+### fbs
+
+```{r}
+Data2 %>%
+  ggplot(aes(fbs))+geom_histogram()
+```
+
+### hdl
+
+```{r}
+Data2 %>%
+  ggplot(aes(hdl))+geom_histogram()
+```
+
+### mdbpr
+
+```{r}
+Data2 %>%
+  ggplot(aes(mdbpr))+geom_histogram()
+```
+
+```{r}
+Data2 %>%
+  ggplot(aes(dmdx))+geom_bar()
+```
+
+### Checking Correlation
+
+```{r}
+Data3<-Data2 %>%
+  select(where(is.numeric))
+cor.Data3 <- cor(Data3, use = "complete.obs", method="pearson")
+head(round(cor.Data3,2))
+corrplot(cor.Data3)
+```
+
+There is correlation between msbpr and mdbpr also between hba1c and fbs
+
+# Estimation
+
+## Multivariable model without Interaction
+
+Outcome : hba1c
+
+IV : age, msbpr, fbs, hdl, dmdx
+
+```{r}
+mod.MLR <- lm (hba1c ~ age + msbpr+ fbs + hdl + dmdx, data=Data2)
+summary(mod.MLR)
+```
+
+```{r}
+tidy(mod.MLR, confin)
+```
