@@ -5,7 +5,7 @@ date: "2024-01-21"
 output: word_document
 ---
 
-1\. Data were collected to study factors that were related with HbA1c. The dataset is named as “metab_syndrome” and in .xlsx formats. (FIRDAUS) (? Dataset [https://github.com/drkamarul/multivar_data_analysis/blob/main/data/metabolic_syndrome.dta)](https://github.com/drkamarul/multivar_data_analysis/blob/main/data/metabolic_syndrome.dta))
+# 1. Data were collected to study factors that were related with HbA1c. The dataset is named as “metab_syndrome” and in .xlsx formats. (FIRDAUS) (? Dataset [https://github.com/drkamarul/multivar_data_analysis/blob/main/data/metabolic_syndrome.dta)](https://github.com/drkamarul/multivar_data_analysis/blob/main/data/metabolic_syndrome.dta))
 
 A model was proposed to examine the relationship between HBA1C with these covariates: AGE, DMDX, MSBPR, FBS and HDL.
 
@@ -24,4 +24,123 @@ library(gtsummary)
 library(haven)
 ```
 
-Read Data
+## Read Data
+
+```{r}
+Data1<-read_dta("metabolic_syndrome.dta")
+summary(Data1)
+```
+
+## Select relevant variables
+
+```{r}
+Data2 <- Data1 %>%
+  select(hba1c,age,dmdx,msbpr,fbs,hdl,mdbpr)
+```
+
+Clear NA data
+
+```{r}
+Data2 <- Data2 %>%
+  na.omit()
+```
+
+```{r}
+summary(Data2)
+```
+
+```{r}
+Data2 <- Data2 %>%
+  mutate(dmdx = as_factor(dmdx))
+```
+
+```{r}
+summary(Data2)
+```
+
+## Model A 
+
+```{r}
+MODEL_A <- lm (hba1c~age + dmdx + msbpr + fbs + hdl, data = Data2 )
+summary(MODEL_A)
+```
+
+```{r}
+tidy(MODEL_A, conf.int = TRUE)
+```
+
+## Regression Model & Equation
+
+hba1c = 3.77 + 1.34 (dmdxyes) + 0.32 (fbs)
+
+```         
+Adjusted R-squared:  0.5455 
+```
+
+# b. Add variable MDBPR to MODEL_A and name the new model as MODEL_B. Describe the effect of this addition to the model. (5 marks)
+
+```{r}
+MODEL_B <- lm (hba1c ~ age + dmdx + fbs + hdl + msbpr + mdbpr, data = Data2)
+summary (MODEL_B)
+```
+
+```         
+Adjusted R-squared:  0.5478 
+```
+
+By adding mdbpr into the model, the model is able to predict the hba1c better from 54.55 % to 54.78%
+
+# c. Perform comparison between MODEL_A and MODEL_B. Give comment. (5 marks)
+
+```{r}
+anova (MODEL_A, MODEL_B)
+```
+
+The p-value is \<0.001, hence the re is significant difference between the models
+
+# d. Perform model assessment for MODEL_B. Save the relevant plots in the thumb-drive and write the names of the plots in the answer sheet. (10 marks).
+
+```{r}
+plot(MODEL_B)
+```
+
+```{r}
+library(lmtest)
+```
+
+```{r}
+bptest(MODEL_B)
+```
+
+p-value is \<0.005, hence assumption of equal residual variance is violated
+
+```{r}
+shapiro.test(MODEL_B$residuals)
+```
+
+p-value is \<0.005, hence assumption of normality of residual is violated
+
+# e. Predict the average value of HBA1C for a population with:
+
+AGE = 48 years
+
+DMDX = has history of diabetes (1)
+
+MSBPR = 133 mmHg
+
+MDBPR = 79 mmHg
+
+FBS = 5.6 mmol/l
+
+HDL = 1.3 mmol/l
+
+Show your calculation. (5 marks)
+
+```{r}
+summary(model.matrix(MODEL_B))
+```
+
+```{r}
+newData1 <- expand.grid(age = 48, dmdx = 2, msbpr =133, mdbpr = 79, fbs = 5.9, hdl = 1.3)
+head(newData1)
+```
