@@ -58,7 +58,7 @@ Data2 <- Data2 %>%
 summary(Data2)
 ```
 
-## Model A 
+## Model A
 
 ```{r}
 MODEL_A <- lm (hba1c~age + dmdx + msbpr + fbs + hdl, data = Data2 )
@@ -148,7 +148,28 @@ hba1c = 3.49 + 1.33 (dmdxyes) + 0.31 (fbs)
 summary(model.matrix(MODEL_B))
 ```
 
+To predict by coding
+
 ```{r}
-newData1 <- expand.grid(age = 48, dmdx = 2, msbpr =133, mdbpr = 79, fbs = 5.9, hdl = 1.3)
-head(newData1)
+predict(MODEL_B, list(age=48, dmdx="yes", msbpr=133, mdbpr=79, hdl=1.3, fbs=5.6 ))
 ```
+
+To predict manually by equation
+
+hba1c = 3.49 + 1.33 (dmdxyes) + 0.31 (fbs)
+
+```{r}
+3.49 + (1.33 *1) + (0.31 *5.6)
+```
+
+AGE = 48 years
+
+DMDX = has history of diabetes (1)
+
+MSBPR = 133 mmHg
+
+MDBPR = 79 mmHg
+
+FBS = 5.6 mmol/l
+
+HDL = 1.3 mmol/l
